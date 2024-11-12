@@ -1,3 +1,3 @@
-module mycloud-back/v1
+module github.com/PatrickLzt/MyCloud-BACK
 
-go 1.23.2
+go 1.23.3
