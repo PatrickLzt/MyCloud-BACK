@@ -1,36 +1,39 @@
 package main
 
 import (
-	"database/sql"
-	"fmt"
 	"log"
-	"mycloud-back/v1/models"
 	"net/http"
-
-	_ "github.com/lib/pq"
 )
 
-func main() {
-	var err error
-	// global variable.
-	models.DB, err = sql.Open("postgres", "postgres://user:pass@localhost/bookstore")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	http.HandleFunc("/books", booksIndex)
-	http.ListenAndServe(":3000", nil)
+type Server struct {
+	address string
 }
 
-func booksIndex(w http.ResponseWriter, r *http.Request) {
-	bks, err := models.AllBooks()
-	if err != nil {
-		log.Print(err)
-		http.Error(w, http.StatusText(500), 500)
+func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		switch r.URL.Path {
+		case "/":
+			w.Write([]byte("index page"))
+			return
+		case "/users":
+			w.Write([]byte("users page"))
+			return
+		default:
+			http.Error(w, "404 Page Not found", http.StatusNotFound)
+			return
+		}
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
+}
 
-	for _, bk := range bks {
-		fmt.Fprintf(w, "%s, %s, %s, £%.2f\n", bk.Isbn, bk.Title, bk.Author, bk.Price)
+func main() {
+
+	s := &Server{address: ":8080"}
+
+	if err := http.ListenAndServe(s.address, s); err != nil {
+		log.Fatal(err)
 	}
 }
