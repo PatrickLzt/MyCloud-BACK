@@ -4,6 +4,9 @@ import (
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
 type App struct {
@@ -14,16 +17,23 @@ type Config struct {
 	address string
 }
 
-func (app *App) Mount() *http.ServeMux {
+func (app *App) Mount() http.Handler {
 
-	mux := http.NewServeMux()
+	router := chi.NewRouter() // Create a Chi router instance
 
-	mux.HandleFunc("GET /health", app.handleHealth)
+	router.Use(middleware.RequestID) // Use the Chi request ID middleware
+	router.Use(middleware.RealIP)    // Use the Chi real IP middleware
+	router.Use(middleware.Recoverer) // Use the Chi recoverer middleware
+	router.Use(middleware.Logger)    // Use the Chi logger middleware
 
-	return mux
+	router.Use(middleware.Timeout(30 * time.Second)) // Use the Chi timeout middleware
+
+	router.Get("/health", app.handleHealth)
+
+	return router
 }
 
-func (app *App) Run(mux *http.ServeMux) error {
+func (app *App) Run(mux http.Handler) error {
 
 	server := &http.Server{
 		Addr:         app.config.address,
