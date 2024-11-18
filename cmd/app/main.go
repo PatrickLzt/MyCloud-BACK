@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/PatrickLzt/MyCloud-BACK/internal/env"
+	"github.com/PatrickLzt/MyCloud-BACK/internal/store"
 	"github.com/lpernett/godotenv"
 )
 
@@ -20,8 +21,11 @@ func main() {
 		address: env.GetString(os.Getenv("ADDRESS"), os.Getenv("PORT")),
 	}
 
+	store := store.NewPGStore(nil)
+
 	app := &App{
 		config: config,
+		store:  store,
 	}
 
 	mux := app.Mount()
