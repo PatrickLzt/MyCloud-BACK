@@ -39,6 +39,7 @@ func (app *App) Mount() http.Handler {
 	router.Use(middleware.Timeout(30 * time.Second)) // Use the Chi timeout middleware
 
 	router.Get("/health", app.handleHealth)
+	router.Post("/create", app.handleCreate)
 
 	return router
 }
