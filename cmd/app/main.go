@@ -34,6 +34,9 @@ func main() {
 		log.Fatalf("Error connecting to the database: %v", err)
 	}
 
+	defer db.Close()
+	log.Printf("Connected to the database")
+
 	store := store.NewPGStore(db)
 
 	app := &App{
