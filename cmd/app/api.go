@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/PatrickLzt/MyCloud-BACK/cmd/db"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
@@ -43,7 +44,13 @@ func (app *App) Run(mux http.Handler) error {
 		IdleTimeout:  time.Minute,
 	}
 
-	log.Printf("Server is listening on %s", app.config.address)
+	// Database connection
+	log.Printf("Connected to the database")
+	db.Initialize()
 
-	return server.ListenAndServe()
+	// Start the server
+	log.Printf("Server is listening on %s", app.config.address)
+	server.ListenAndServe()
+
+	return nil
 }
