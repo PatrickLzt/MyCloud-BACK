@@ -5,26 +5,16 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/PatrickLzt/MyCloud-BACK/internal/store"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
 
 type App struct {
 	config Config
-	store  store.Storage
 }
 
 type Config struct {
 	address string
-	db      dbConfig
-}
-
-type dbConfig struct {
-	address            string
-	maxOpenConnections int
-	maxIdleConnections int
-	maxIdleTime        string
 }
 
 func (app *App) Mount() http.Handler {
@@ -39,7 +29,6 @@ func (app *App) Mount() http.Handler {
 	router.Use(middleware.Timeout(30 * time.Second)) // Use the Chi timeout middleware
 
 	router.Get("/health", app.handleHealth)
-	router.Post("/create", app.handleCreate)
 
 	return router
 }
