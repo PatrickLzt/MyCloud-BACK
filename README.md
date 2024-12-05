@@ -7,3 +7,7 @@ Back-end side of project
 This project Runs over "Air" framework.
 
 To start the server type `air` in the root directory.
+
+To run migrations, install `golang-migrate`:
+
+`go get -u -d github.com/golang-migrate/migrate/cmd/migrate`
